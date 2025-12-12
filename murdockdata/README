@@ -1,0 +1,72 @@
+2025 edit:
+----------
+Added code to makemasterrwpartitions.m that writes a mapping (system_mapping.txt) between the original index of a system in the Murdock file and the index of that system in rwpartitions.txt
+
+Then used system_mapping.txt to manually make murdock_orig_codes.csv, which includes Murdock's codes for each system and the index of that system (analysis_index) in rwpartitions.txt
+
+The rest of this file is the original README
+
+This directory contains the Murdock data and related scripts.
+
+Murdock data:
+----------------
+
+These data were published in Murdock (1970), Kin term patterns and their
+distribution, Ethnology, 9(2). This paper was reprinted in World Cultures,
+11(1) in 2000 and we used the version of the data set on the data disk
+that accompanied this reprint.
+
+Raw data files:
+-----------------
+kinterm_orig.txt:  the version of the data set included in World Cultures 11(1).
+
+kinterm_adjusted.txt: the version of the data set used for our analyses. 
+Identical to kinterm_orig.txt except for the changes noted below.  
+
+At10.cod: codes for interpreting kinterm_orig.txt and kinterm_adjusted.txt
+
+
+Differences between kinterm_adjusted.txt and kinterm_orig.txt:
+----------------------------------------------------------
+As described in At10.cod, kinterm_orig.txt contains codes for eight kinds
+of kin types: grandparents, grandchildren, uncles, aunts, niblings
+(nephews and nieces), siblings, cousins, and siblings-in-law. A small
+number of the codes for aunts appeared to be incorrect---they are
+inconsistent with the variable descriptions in At10.cod and they do not
+match the information in Murdock's original article. We removed these
+errors and reconciled the electronic data set with the original article by
+changing all aunt codes of (7,10) and (8,.) to (7,9) and (8,10)
+respectively. kinterm_adjusted.txt includes these changes but is otherwise
+identical to kinterm_orig.txt
+
+mastertree.pdf
+---------------
+A diagram showing numeric labels for 114 individuals in the family trees
+of Alice and Bob.
+
+rwpartitions.txt
+-----------------
+
+Partitions of the master tree for each culture in Murdock's data set. Each
+row is a partition and the first entry in each row is the frequency of
+that partition.  Missing entries are indicated with -1s.
+
+We don't have data for parents, children -- so we assume that there are
+four distinct terms for mother, father, son, daughter.
+
+rwpartitions.txt is created by running 
+
+> readkindata
+> makemasterrwpartitions
+
+from within Matlab.
+
+- readkindata.m extracts the codes from kinterm_adjusted.txt that we'll
+  need.
+- makemasterrwpartitions.m combines these codes to construct partitions of
+  the first 112 individuals shown in mastertree.pdf
+
+englishpartition.txt, northernpaiute.txt:
+----------------------------------------
+Partitions corresponding to the systems in Fig 2. 
+

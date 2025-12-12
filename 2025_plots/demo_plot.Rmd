@@ -1,0 +1,104 @@
+---
+title: 'Kinship tradeoff plots'
+author: "Charles Kemp"
+output:
+  html_document:
+    theme: flatly
+    highlight: textmate
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, progress = TRUE)
+```
+
+```{r packageload, message=FALSE}
+library(here)
+library(tidyverse)
+library(ggplot2)
+theme_set( theme_classic(base_size = 25) )
+
+```
+
+This notebook makes demo plots showing complexities and communicative costs for attested kinship systems. 
+
+```{r combined_data}
+
+tree_index <- "18" # 12:full tree, 14:niblings, 15:grandparents, 16:grandchildren, 
+                   # 17:aunts, 18:siblings, 19: uncles
+d_murdock_file <- here("murdockdata", "murdock_orig_codes.csv")
+d_murdock <- read_csv(d_murdock_file)
+
+# mapping file that allows us to link Murdock cultures with lines in the score files for tree 12
+d_map_file <-  here("2025_plots", paste0("rwmapindex", tree_index, ".csv"))
+d_map <- read_csv(d_map_file, col_names=c("analysis_index", "score_index"))
+                  
+d <- d_murdock %>% 
+  left_join(d_map, by = "analysis_index") %>% 
+  select(name, score_index)
+
+# score files
+
+rw_complexity_file <- here("output", paste0("complex_", tree_index, "_1_1_1_2_rpt1_rand0"))
+rw_cost_file <- here("output", paste0("cost_", tree_index, "_1_1_1_2_6_rpt1_rand0"))
+
+rw_complexity <- read_delim(rw_complexity_file, delim = " ", col_names = c("complexity", "count")) %>% 
+  # needed so that complexity of each rule is set to 1
+  mutate(complexity = complexity/3)
+rw_cost <- read_csv(rw_cost_file, col_names = c("cost"))
+
+scores <- tibble(complexity=rw_complexity$complexity, cost = rw_cost$cost) %>% 
+  mutate(score_index = row_number())
+
+d_scores <- d %>% 
+  left_join(scores, by = "score_index")
+
+system_plot <- d_scores %>% 
+  ggplot(aes(x=complexity, y=cost)) +
+  geom_point(size=3, alpha=0.5) +
+  geom_text(aes(label=name), vjust=1.5, size=3) +
+  labs(x="Complexity", y="Communicative Cost") 
+
+show(system_plot)
+show(d_scores[d_scores$complexity == 12, ])
+```
+For the full tree only, make a plot that shows attested systems and randomly sampled systems.
+
+```{r full_tree_with_random}
+if(tree_index == '12') {
+  # replace this with scores for a larger sample for a better plot
+  hypothetical_file <- here("output", "combinedscores_12_10_10_10_10_6_rpt1_rand0")
+  hypothetical_file <- "/Users/ckemp/Downloads/combinedscoreswithdup_12_1_1_16_5_6_rpt1_rand0_FILTER"
+     
+  hyp <- read_delim(hypothetical_file, delim = " ", col_names = c("complexity", "cost", "index"))  %>% 
+       select(-index)
+  
+  # hyp is too big to plot -- so use stratified sampling to get a subset of this data frame
+  
+  num_bins <- 100
+  # 1. Determine the bin for each point
+  hyp$x_bin <- cut(hyp$complexity, breaks = num_bins, labels = FALSE)
+  hyp$y_bin <- cut(hyp$cost, breaks = num_bins, labels = FALSE)
+
+  # 2. Combine the bin assignments into a single factor for grouping
+  hyp$bin_id <- interaction(hyp$x_bin, hyp$y_bin)
+
+  # 3. Use stratified sampling to get one random point from each populated bin
+  set.seed(1) # For reproducibility
+  final_subset_indices <- tapply(seq_along(hyp$bin_id), hyp$bin_id, function(indices) {
+  sample(indices, 1)
+})
+
+  # 4. Create the final subset
+  hypsmall <- hyp[final_subset_indices, c("cost", "complexity")]
+
+  rw_and_hyp <- hypsmall %>% 
+     ggplot(aes(x=complexity, y=cost)) +
+     geom_point(size=1, color = "lightgray") +
+     geom_point(data = d_scores, aes(x=complexity, y=cost), size=2, color = "black") +
+     labs(x="Complexity", y="Communicative Cost") 
+  show(rw_and_hyp)
+}
+```
+
+
+
