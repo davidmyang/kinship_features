@@ -1,6 +1,13 @@
+"""
+Calculates feature-based cost for real-world and hypothetical partitions of kinship subtrees.
+Saves the scores with feature-based costs to CSV files.
+
+To change feature weights, modify the FEATURE_WEIGHTS dictionary below.
+"""
 from pathlib import Path
 import pandas as pd
 import numpy as np
+from consts import IS_UNI_FEAT_WEIGHTS
 
 # Index of kintypes in the full kinship tree
 niblings = np.array([99,100,101,102,103,104,105,106,107,108])
@@ -24,17 +31,28 @@ def get_kintype(index):
     return index
 
 # The lists for each feature are zero-indexed full tree indices
-LATERAL_MOM = [0, 1, 2, 3, 8, 9, 12, 13, 14, 15, 16, 46, 47, 52,53,54,55,56, 57, 58, 59, 64, 65, 68, 69, 70, 71, 72, 102,103,108,109,110,111]
-LATERAL_DAD = [4, 5, 6, 7, 10, 11, 17, 18, 19, 20, 21,46, 47, 52,53,54,55, 60, 61, 62, 63, 66, 67, 73, 74, 75, 76, 77,102,103,108,109,110,111]
-def get_laterality(index):
-    """Determine laterality of a kintype"""
-    if index in LATERAL_MOM:
-        return 'M'
-    elif index in LATERAL_DAD:
+SCR_F = [0, 1, 2, 3, 8, 9, 12, 13, 15, 16, 52,53,56, 57, 58, 59, 64, 65, 68, 69, 70, 71, 72, 108,109]
+SCR_M = [4, 5, 6, 7, 10, 11, 17, 18, 20, 21, 54,55, 60, 61, 62, 63, 66, 67, 73, 74, 75, 76, 77,110,111]
+def get_sex_connecting_relative(index):
+    """Determine sex of connecting relative of a kintype"""
+    if index in SCR_F:
         return 'F'
+    elif index in SCR_M:
+        return 'M'
     else:
         return None
-    
+
+LINEAL = [8, 9, 10, 11, 14, 19, 46, 47, 52, 53, 54, 55, 64, 65, 66, 67, 70, 75, 102, 103, 108, 109, 110, 111]
+COLLATERAL = [12, 13, 15, 16, 17, 18, 20, 21, 30, 31, 32, 33, 68, 69, 71, 72, 73, 74, 76, 77, 86, 87, 88, 89, 98, 99, 100, 101, 104, 105, 106, 107]
+def get_lineality(index):
+    """Determine lineality of a kintype""" 
+    if index in LINEAL:
+        return 'Lineal'
+    elif index in COLLATERAL:
+        return 'Collateral'
+    else:
+        return None   
+
 def get_generation(index):
     """Determine generation of a kintype"""
     if index in list(range(8, 12)) + list(range(64, 68)):
@@ -60,15 +78,47 @@ def get_sex(index):
         return 'M'
     else:
         return None
+    
+ELDER = [13, 16, 18, 21, 31, 33, 69, 72, 74, 77, 87, 89]
+YOUNGER = [12, 15, 17, 20, 30, 32, 68, 71, 73, 76, 86, 88]
+def get_relative_age(index):
+    """Determine relative age of a kintype within a subtree"""
+    if index in ELDER:
+        return 'Elder'
+    elif index in YOUNGER:
+        return 'Younger'
+    else:
+        return None
+    
+ALICE = list(range(0, 56))
+BOB = list(range(56, 112))
+def get_speaker_sex(index):
+    """Determine speaker sex of kintype within a subtree"""
+    if index in ALICE:
+        return 'A'
+    elif index in BOB:
+        return 'B'
+    else:
+        return None
 
 # Maps feature to its function
-FEATURE_FUNCS = {"kintype": get_kintype, "laterality": get_laterality, "generation": get_generation, "sex": get_sex}
+FEATURE_FUNCS = {"kin": get_kintype, "lin": get_lineality, "scr": get_sex_connecting_relative, "gen": get_generation, "sex": get_sex, "ra": get_relative_age, "ss": get_speaker_sex}
 
 # Probabilities for each feature
-FEATURE_PROBS = {"kintype": 0, "laterality": 0, "generation": 1, "sex": 0}
+FEATURE_WEIGHTS = {
+    "kin": 0/100, 
+    "lin": 100/5/100, 
+    "scr": 100/5/100,
+    "gen": 100/5/100, 
+    "sex": 100/5/100, 
+    "ra": 100/5/100, 
+    "ss": 0,
+}
+
+feat_weights_df = pd.read_csv("feature_based/feature_weights.csv").fillna(0)
 
 # Make file subname
-nonzero_keys = [key for key, value in FEATURE_PROBS.items() if value != 0 and key != 'kintype']
+nonzero_keys = [key for key, value in FEATURE_WEIGHTS.items() if value != 0]
 features = '_'.join(nonzero_keys)
 
 def get_need_probabilities():
@@ -114,15 +164,17 @@ def get_need_probabilities():
 
 def load_hypothetical_partitions(tree_index):
     """Load hypothetical partitions for a given tree index"""
-    file_path = Path("feature_based") / "output" / f"hyp_partitions_{tree_index}.csv"
+    file_path = Path("feature_based") / "output" / "partitions" / f"hyp_partitions_{tree_index}.csv"
     df = pd.read_csv(file_path, header=None)
     return df
 
 def load_rw_partitions(tree_index):
     """Load RW partitions for a given tree index"""
-    file_path = Path("feature_based") / "output" / f"rw_partitions_{tree_index}.csv"
+    file_path = Path("feature_based") / "output" / "partitions" / f"rw_partitions_{tree_index}.csv"
     df = pd.read_csv(file_path, header=None)
-    return df
+    freqs = df.iloc[:, 0]
+    partitions = df.iloc[:, 1:]
+    return freqs, partitions
 
 def calculate_cost(tree_index, partition, need_probs):
     split_index = len(partition) // 2
@@ -133,14 +185,17 @@ def calculate_cost(tree_index, partition, need_probs):
     bob_partition = partition[split_index:]
     alice_cost = calculate_feature_cost(tree_index, alice_partition, need_probs)
     bob_cost = calculate_feature_cost(tree_index, bob_partition, need_probs)
-    return (alice_cost + bob_cost)
+    #total_cost = calculate_feature_cost(tree_index, partition, need_probs)
+    speaker_sex_cost = calculate_speaker_sex_cost(tree_index, partition, alice_partition, need_probs)
+    return alice_cost + bob_cost + speaker_sex_cost
+    #return total_cost# + speaker_sex_cost
 
-def calculate_feature_cost(tree_index, partition, need_probs):
+def calculate_feature_cost(tree_index, partition, need_probs, used_features={'lin', 'scr', 'gen', 'sex', 'ra'}):
     """Calculate communicative cost based on kintype feature uncertainty"""
     total_cost = 0.0
-    if sum(FEATURE_PROBS.values()) != 1.0:
-        raise ValueError("Feature probabilities must sum to 1.")
-    
+    if round(sum(FEATURE_WEIGHTS.values()), 2) != 1.0:
+        raise ValueError(f"Feature weights must sum to 1, currently {sum(FEATURE_WEIGHTS.values())}.")
+
     full_tree_mapping = subtree_index_map[tree_index]
     # p_f_given_o = 1/len(FEATURE_FUNCS)
     for i, label in enumerate(partition):
@@ -153,9 +208,20 @@ def calculate_feature_cost(tree_index, partition, need_probs):
         full_tree_label_kintypes = full_tree_label_kintypes - 1 
 
         Z = np.sum(need_probs[full_tree_label_kintypes])
+        if Z == 0:
+            #print(type(label), label.dtype if hasattr(label, 'dtype') else type(label))
+            #print(type(partition), partition[0].dtype)
+            continue
+        p_f_given_o = 1 / len(used_features)
 
         # Apply feature functions
-        for func_name, func in FEATURE_FUNCS.items():
+        for func_name in used_features:
+            func = FEATURE_FUNCS[func_name]
+            # niblings subtree does not have partition for female speaker
+            if tree_index == 14 and func_name == 'ss':
+                continue
+            if func_name == 'ss' and i >= len(partition) // 2:
+                continue
             # maps the index in subtree partition to zero-indexed mastertree index
             true_index = full_tree_mapping[i] - 1
             true_feat = func(true_index)
@@ -163,22 +229,61 @@ def calculate_feature_cost(tree_index, partition, need_probs):
                 continue
             matching_kintypes = [k for k in full_tree_label_kintypes if func(k) == true_feat]
             Z_feat = np.sum(need_probs[matching_kintypes])
-            if Z == 0:
-                continue
+
             # probability of choosing object from subtree
             p_o = need_probs[true_index] / np.sum(need_probs[full_tree_mapping - 1])
-            p_f_given_o = FEATURE_PROBS[func_name]
+
+            if not IS_UNI_FEAT_WEIGHTS:
+                p_f_given_o = feat_weights_df[func_name][tree_index - 14]
+
             p_value_given_label_feat = Z_feat / Z
             surprisal_feat = -np.log2(p_value_given_label_feat)
+            #print(f'feature: {func_name}, true_index: {true_index}, label: {label}, true_feat: {true_feat}, cost: {surprisal_feat}, Z_feat: {Z_feat}, Z: {Z}')
+
             total_cost += p_o * p_f_given_o * surprisal_feat
-    
+            #print(f'index: {i},total_cost updated: {total_cost}')
+            #print(f"Index: {true_index}, Feature: {func_name}, p_o: {p_o}, p_f_given_o: {p_f_given_o}, p_value_given_label_feat: {p_value_given_label_feat}, surprisal_feat: {surprisal_feat}, Partial Cost: {p_o * p_f_given_o * surprisal_feat}")
+    return total_cost
+
+def calculate_speaker_sex_cost(tree_index, partition, alice_partition, need_probs):
+    """Calculate cost of determining speaker's sex"""
+    if tree_index == 14:
+        return 0.0  # niblings subtree does not have partition for female speaker
+    full_tree_mapping = subtree_index_map[tree_index]
+    partition_len = len(partition)
+    total_cost = 0.0
+    for i in range(partition_len // 2):
+        true_index = full_tree_mapping[i] - 1
+        p_o = need_probs[true_index] / np.sum(need_probs[full_tree_mapping - 1])
+        #print(p_o)
+        if partition[i] == -1:
+            continue
+        alice_label = partition[i]
+        subtree_label_kintypes = np.where(partition == alice_label)[0]
+        full_tree_label_kintypes = full_tree_mapping[subtree_label_kintypes]
+
+        # subtract one from all elements here to match zero-indexing of need_probs array
+        full_tree_label_kintypes = full_tree_label_kintypes - 1 
+        Z = np.sum(need_probs[full_tree_label_kintypes])
+        matching_alice_kintypes = np.where(alice_partition == alice_label)[0]
+        full_tree_label_kintypes = full_tree_mapping[matching_alice_kintypes]
+
+        # subtract one from all elements here to match zero-indexing of need_probs array
+        full_tree_label_kintypes = full_tree_label_kintypes - 1 
+        Z_feat = np.sum(need_probs[full_tree_label_kintypes])
+        if Z_feat == 0 or Z == 0:
+            continue
+        p_f_given_o = feat_weights_df['ss'][tree_index - 14] if not IS_UNI_FEAT_WEIGHTS else 1 / len(FEATURE_FUNCS)
+        p_value_given_label_feat = Z_feat / Z
+        surprisal_feat = -np.log2(p_value_given_label_feat)
+        total_cost += p_o * p_f_given_o * surprisal_feat
     return total_cost
 
 def load_rw_scores(tree_index):
     """Load real-world scores"""
 
-    rw_complexity_file = Path("output") / f"complex_{tree_index}_1_1_1_2_rpt1_rand0"
-    rw_cost_file = Path("output") / f"cost_{tree_index}_1_1_1_2_6_rpt1_rand0"
+    rw_complexity_file = Path("input") / f"complex_{tree_index}_1_1_1_2_rpt1_rand0"
+    rw_cost_file = Path("input") / f"cost_{tree_index}_1_1_1_2_6_rpt1_rand0"
 
     rw_complexity = (
         pd.read_csv(rw_complexity_file, sep=" ", names=["complexity", "count"])
@@ -196,8 +301,8 @@ def load_rw_scores(tree_index):
     return scores
 
 def load_hypothetical_scores(tree_index):
-    hyp_complexity_file = Path("output") / f"complex_{tree_index}_1_1_1_4_rpt1_rand0"
-    hyp_cost_file = Path("output") / f"cost_{tree_index}_1_1_1_4_6_rpt1_rand0"
+    hyp_complexity_file = Path("input") / f"complex_{tree_index}_1_1_1_4_rpt1_rand0"
+    hyp_cost_file = Path("input") / f"cost_{tree_index}_1_1_1_4_6_rpt1_rand0"
 
     hyp_complexity = (
         pd.read_csv(hyp_complexity_file, sep=" ", names=["complexity", "count"])
@@ -216,12 +321,14 @@ def load_hypothetical_scores(tree_index):
 
 def main():
     need_probs = get_need_probabilities()
-    for tree_index in range(14, 20):
+    #print(need_probs)
+    
+    for tree_index in range(15,20):#range(14, 20):
         print(f"Processing tree index: {tree_index}")
 
         # Load hypothetical and RW partitions
         hyp_partitions_df = load_hypothetical_partitions(tree_index)
-        rw_partitions_df = load_rw_partitions(tree_index)
+        freqs, rw_partitions_df = load_rw_partitions(tree_index)
 
         # Calculate feature-based costs for hypothetical partitions
         hyp_feature_based_costs = []
@@ -238,16 +345,24 @@ def main():
 
         # Load hypothetical scores and add feature-based costs
         hyp_scores_df = load_hypothetical_scores(tree_index)
-        hyp_scores_df['feature_based_cost'] = hyp_feature_based_costs
+        hyp_scores_df['feature_cost'] = hyp_feature_based_costs
 
         # Load real-world scores and add feature-based costs
         rw_scores_df = load_rw_scores(tree_index)
-        rw_scores_df['feature_based_cost'] = rw_feature_based_costs
+        rw_scores_df['feature_cost'] = rw_feature_based_costs
+        rw_scores_df['freqs'] = freqs
         
         # Save all scores
-        rw_output_file = Path("feature_based") / "output" / f"rw_all_scores_{features}_{tree_index}.csv"
-        rw_scores_df.to_csv(rw_output_file, index=False)
-        hyp_output_file = Path("feature_based") / "output" / f"hyp_all_scores_{features}_{tree_index}.csv"
+        base_file = Path("feature_based") / "output" / "feature_cost_only"
+
+        if IS_UNI_FEAT_WEIGHTS:
+            rw_output_file = base_file / f"rw_all_scores_{tree_index}.csv"
+            hyp_output_file = base_file / f"hyp_all_scores_{tree_index}.csv"
+        else:
+            rw_output_file = base_file / f"rw_all_scores_feat_weights_{tree_index}.csv"
+            hyp_output_file = base_file / f"hyp_all_scores_feat_weights_{tree_index}.csv"
+
+        rw_scores_df.to_csv(rw_output_file, index=False)    
         hyp_scores_df.to_csv(hyp_output_file, index=False)
         
 if __name__ == "__main__":

@@ -1,0 +1,395 @@
+{
+    "[1 1 1 1 2 3 2 3 2 3]": {
+        "1": {
+            "positive": "{'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {0}, 'scr': {None, 1}}"
+        },
+        "3": {
+            "positive": "{'sex': {1}, 'scr': {None, 1}}"
+        },
+        "complexity": 5
+    },
+    "[1 2 1 2 3 4 3 4 3 4]": {
+        "1": {
+            "positive": "{'sex': {0}, 'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}, 'scr': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'scr': {None, 1}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'scr': {None, 1}}"
+        },
+        "complexity": 8
+    },
+    "[1 1 1 1 2 3 4 4 4 4]": {
+        "1": {
+            "positive": "{'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'scr': {1}}"
+        },
+        "complexity": 6
+    },
+    "[1 1 1 1 2 3 1 1 1 1]": {
+        "1": {
+            "positive": "{'lin': {1}}"
+        },
+        "2": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "complexity": 5
+    },
+    "[1 2 1 2 3 4 1 2 1 2]": {
+        "1": {
+            "positive": "{'sex': {0}, 'lin': {1}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}, 'lin': {1}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "complexity": 8
+    },
+    "[1 2 1 2 1 2 1 2 1 2]": {
+        "1": {
+            "positive": "{'sex': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}}"
+        },
+        "complexity": 2
+    },
+    "[1 2 1 2 3 4 5 6 5 6]": {
+        "1": {
+            "positive": "{'sex': {0}, 'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}, 'scr': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "5": {
+            "positive": "{'sex': {0}, 'scr': {1}}"
+        },
+        "6": {
+            "positive": "{'sex': {1}, 'scr': {1}}"
+        },
+        "complexity": 12
+    },
+    "[1 1 1 1 2 3 4 4 5 5]": {
+        "1": {
+            "positive": "{'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'scr': {1}, 'ra': {0}}"
+        },
+        "5": {
+            "positive": "{'scr': {1}, 'ra': {1}}"
+        },
+        "complexity": 9
+    },
+    "[1 2 1 2 3 4 5 5 5 5]": {
+        "1": {
+            "positive": "{'sex': {0}, 'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}, 'scr': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "5": {
+            "positive": "{'scr': {1}}"
+        },
+        "complexity": 9
+    },
+    "[1 1 2 2 3 4 5 5 6 6]": {
+        "1": {
+            "positive": "{'scr': {0}, 'ra': {0}}"
+        },
+        "2": {
+            "positive": "{'scr': {0}, 'ra': {1}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "5": {
+            "positive": "{'scr': {1}, 'ra': {0}}"
+        },
+        "6": {
+            "positive": "{'scr': {1}, 'ra': {1}}"
+        },
+        "complexity": 12
+    },
+    "[1 1 1 1 2 3 4 5 4 5]": {
+        "1": {
+            "positive": "{'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {0}, 'scr': {1}}"
+        },
+        "5": {
+            "positive": "{'sex': {1}, 'scr': {1}}"
+        },
+        "complexity": 9
+    },
+    "[1 1 1 1 2 3 4 5 6 7]": {
+        "1": {
+            "positive": "{'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {0}, 'scr': {1}, 'ra': {0}}"
+        },
+        "5": {
+            "positive": "{'sex': {1}, 'scr': {1}, 'ra': {0}}"
+        },
+        "6": {
+            "positive": "{'sex': {0}, 'scr': {1}, 'ra': {1}}"
+        },
+        "7": {
+            "positive": "{'sex': {1}, 'scr': {1}, 'ra': {1}}"
+        },
+        "complexity": 17
+    },
+    "[1 2 1 2 1 3 1 3 1 3]": {
+        "1": {
+            "positive": "{'sex': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}, 'scr': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {1}, 'scr': {None, 1}}"
+        },
+        "complexity": 5
+    },
+    "[1 2 1 2 3 4 5 6 7 8]": {
+        "1": {
+            "positive": "{'sex': {0}, 'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}, 'scr': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "5": {
+            "positive": "{'sex': {0}, 'scr': {1}, 'ra': {0}}"
+        },
+        "6": {
+            "positive": "{'sex': {1}, 'scr': {1}, 'ra': {0}}"
+        },
+        "7": {
+            "positive": "{'sex': {0}, 'scr': {1}, 'ra': {1}}"
+        },
+        "8": {
+            "positive": "{'sex': {1}, 'scr': {1}, 'ra': {1}}"
+        },
+        "complexity": 20
+    },
+    "[1 2 1 2 3 2 3 2 3 2]": {
+        "1": {
+            "positive": "{'sex': {0}, 'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'scr': {None, 1}}"
+        },
+        "complexity": 5
+    },
+    "[1 2 1 2 3 4 1 5 1 5]": {
+        "1": {
+            "positive": "{'sex': {0}, 'lin': {1}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}, 'scr': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "5": {
+            "positive": "{'sex': {1}, 'scr': {1}}"
+        },
+        "complexity": 10
+    },
+    "[1 1 2 2 3 4 1 1 2 2]": {
+        "1": {
+            "positive": "{'ra': {0}}"
+        },
+        "2": {
+            "positive": "{'ra': {1}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "complexity": 6
+    },
+    "[1 1 2 2 3 4 5 5 6 7]": {
+        "1": {
+            "positive": "{'scr': {0}, 'ra': {0}}"
+        },
+        "2": {
+            "positive": "{'scr': {0}, 'ra': {1}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "5": {
+            "positive": "{'scr': {1}, 'ra': {0}}"
+        },
+        "6": {
+            "positive": "{'sex': {0}, 'scr': {1}, 'ra': {1}}"
+        },
+        "7": {
+            "positive": "{'sex': {1}, 'scr': {1}, 'ra': {1}}"
+        },
+        "complexity": 16
+    },
+    "[1 2 1 2 3 2 1 2 1 2]": {
+        "1": {
+            "positive": "{'sex': {0}, 'lin': {1}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "complexity": 5
+    },
+    "[1 2 1 2 3 4 1 5 1 2]": {
+        "1": {
+            "positive": "{'sex': {0}, 'lin': {1}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}}",
+            "negative": "{'scr': {None, 1}, 'ra': {None, 0}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "5": {
+            "positive": "{'sex': {1}, 'scr': {1}, 'ra': {0}}"
+        },
+        "complexity": 12
+    },
+    "[1 2 1 2 3 4 5 5 6 6]": {
+        "1": {
+            "positive": "{'sex': {0}, 'scr': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}, 'scr': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "5": {
+            "positive": "{'scr': {1}, 'ra': {0}}"
+        },
+        "6": {
+            "positive": "{'scr': {1}, 'ra': {1}}"
+        },
+        "complexity": 12
+    },
+    "[1 2 3 3 1 2 1 2 1 2]": {
+        "1": {
+            "positive": "{'sex': {0}}",
+            "negative": "{'scr': {0}, 'ra': {1}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}}",
+            "negative": "{'scr': {0}, 'ra': {1}}"
+        },
+        "3": {
+            "positive": "{'scr': {0}, 'ra': {1}}"
+        },
+        "complexity": 4
+    },
+    "[1 2 3 4 5 6 1 2 3 4]": {
+        "1": {
+            "positive": "{'sex': {0}, 'ra': {0}}"
+        },
+        "2": {
+            "positive": "{'sex': {1}, 'ra': {0}}"
+        },
+        "3": {
+            "positive": "{'sex': {0}, 'ra': {1}}"
+        },
+        "4": {
+            "positive": "{'sex': {1}, 'ra': {1}}"
+        },
+        "5": {
+            "positive": "{'sex': {0}, 'lin': {0}}"
+        },
+        "6": {
+            "positive": "{'sex': {1}, 'lin': {0}}"
+        },
+        "complexity": 12
+    }
+}
