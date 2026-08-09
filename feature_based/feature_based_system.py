@@ -191,13 +191,9 @@ if __name__ == "__main__":
         rw_feature_representations = {}
         for partition in rw_partitions_df.values:
             if IS_FEATURE_COMPLEXITY:
-                #complexity, used_features, representation = calculate_complexity(partition.tolist(), FEATURES)
                 min_expr, complexity = calculate_complexity(partition.tolist(), FEATURES)
                 min_expr['complexity'] = complexity
-                #representation['complexity'] = complexity
-                #complexity = print_representation(partition, FEATURES, LABELS)
                 rw_feature_complexities.append(complexity)
-                #rw_feature_complexities.append(len(set(partition)))
                 rw_feature_representations[str(partition)] = min_expr
 
             if IS_FEATURE_COST:
@@ -240,7 +236,6 @@ if __name__ == "__main__":
         for partition in hyp_partitions_df.values:
             if IS_FEATURE_COMPLEXITY:
                 _, complexity = calculate_complexity(partition, FEATURES)
-                #complexity = print_representation(partition, FEATURES, LABELS)
                 hyp_feature_complexities.append(complexity)
 
             if IS_FEATURE_COST:

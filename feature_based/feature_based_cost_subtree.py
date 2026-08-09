@@ -178,17 +178,18 @@ def load_rw_partitions(tree_index):
 
 def calculate_cost(tree_index, partition, need_probs):
     split_index = len(partition) // 2
+
     # for niblings, the partition is only for bob
     if tree_index == 14:
         split_index = 0
+
     alice_partition = partition[:split_index]
     bob_partition = partition[split_index:]
     alice_cost = calculate_feature_cost(tree_index, alice_partition, need_probs)
     bob_cost = calculate_feature_cost(tree_index, bob_partition, need_probs)
-    #total_cost = calculate_feature_cost(tree_index, partition, need_probs)
     speaker_sex_cost = calculate_speaker_sex_cost(tree_index, partition, alice_partition, need_probs)
+
     return alice_cost + bob_cost + speaker_sex_cost
-    #return total_cost# + speaker_sex_cost
 
 def calculate_feature_cost(tree_index, partition, need_probs, used_features={'lin', 'scr', 'gen', 'sex', 'ra'}):
     """Calculate communicative cost based on kintype feature uncertainty"""
@@ -209,9 +210,8 @@ def calculate_feature_cost(tree_index, partition, need_probs, used_features={'li
 
         Z = np.sum(need_probs[full_tree_label_kintypes])
         if Z == 0:
-            #print(type(label), label.dtype if hasattr(label, 'dtype') else type(label))
-            #print(type(partition), partition[0].dtype)
             continue
+
         p_f_given_o = 1 / len(used_features)
 
         # Apply feature functions
@@ -222,7 +222,8 @@ def calculate_feature_cost(tree_index, partition, need_probs, used_features={'li
                 continue
             if func_name == 'ss' and i >= len(partition) // 2:
                 continue
-            # maps the index in subtree partition to zero-indexed mastertree index
+
+            # Maps the index in subtree partition to zero-indexed mastertree index
             true_index = full_tree_mapping[i] - 1
             true_feat = func(true_index)
             if true_feat is None:
@@ -238,11 +239,8 @@ def calculate_feature_cost(tree_index, partition, need_probs, used_features={'li
 
             p_value_given_label_feat = Z_feat / Z
             surprisal_feat = -np.log2(p_value_given_label_feat)
-            #print(f'feature: {func_name}, true_index: {true_index}, label: {label}, true_feat: {true_feat}, cost: {surprisal_feat}, Z_feat: {Z_feat}, Z: {Z}')
 
             total_cost += p_o * p_f_given_o * surprisal_feat
-            #print(f'index: {i},total_cost updated: {total_cost}')
-            #print(f"Index: {true_index}, Feature: {func_name}, p_o: {p_o}, p_f_given_o: {p_f_given_o}, p_value_given_label_feat: {p_value_given_label_feat}, surprisal_feat: {surprisal_feat}, Partial Cost: {p_o * p_f_given_o * surprisal_feat}")
     return total_cost
 
 def calculate_speaker_sex_cost(tree_index, partition, alice_partition, need_probs):
@@ -321,7 +319,6 @@ def load_hypothetical_scores(tree_index):
 
 def main():
     need_probs = get_need_probabilities()
-    #print(need_probs)
     
     for tree_index in range(15,20):#range(14, 20):
         print(f"Processing tree index: {tree_index}")

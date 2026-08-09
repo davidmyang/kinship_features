@@ -1,4 +1,3 @@
-import csv
 import pandas as pd
 from feature_based_cost_subtree import load_rw_partitions
 
@@ -78,4 +77,3 @@ def get_speaker_sex_weight(partitions_df, freqs):
 if __name__ == "__main__":
     norm_df = get_feature_weights()
     norm_df.to_csv("feature_based/feature_weights.csv", index=False)
-

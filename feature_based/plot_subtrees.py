@@ -22,9 +22,6 @@ subtree_names = {
     19: "Uncles"
 }
 
-# Determines which output score file is plotted (e.g. kin_lat)
-features = "lin_scr_gen_sex_ra_ss" 
-
 def get_filepath(index, is_rw=True):
     if is_rw:
         if IS_FEATURE_COST and IS_FEATURE_COMPLEXITY:
@@ -53,17 +50,6 @@ def get_filepath(index, is_rw=True):
             else:
                 return OUTPUT_COST_SUBFOLDER / f"hyp_cost_feat_weights_{index}.csv"
         
-
-# rw_pattern = None
-# hyp_pattern = None
-
-# if IS_REDUCTION:
-#     rw_pattern = "feature_based/output/feature_complexity/rw_feature_reduc_scores_{}.csv"
-#     hyp_pattern = "feature_based/output/feature_complexity/hyp_feature_reduc_scores_{}.csv"
-# else:
-#     rw_pattern = "feature_based/output/feature_complexity/rw_feature_scores_{}.csv"
-#     hyp_pattern = "feature_based/output/feature_complexity/hyp_feature_scores_{}.csv"
-
 for subtree in subtrees:
 
     #rw_df = pd.read_csv(rw_pattern.format(features, subtree))
@@ -96,7 +82,7 @@ for subtree in subtrees:
     ax_left.set_title(f"{subtree_names[subtree]}: Cost vs Complexity")
     ax_left.set_xlabel("Complexity")
     ax_left.set_ylabel("Cost")
-    #ax_left.set_ylim(y_min, y_max)
+
     custom_handles = [
         Line2D([0], [0], marker='o', color='w', markerfacecolor='red', 
             markersize=8, alpha=0.7, linestyle=''),
@@ -122,7 +108,7 @@ for subtree in subtrees:
     ylabel = "Feature Cost" if IS_FEATURE_COST else "Cost"
     ax_right.set_xlabel(xlabel)
     ax_right.set_ylabel(ylabel)
-    #ax_right.set_ylim(y_min, y_max)
+
     custom_handles = [
         Line2D([0], [0], marker='o', color='w', markerfacecolor='red', 
             markersize=8, alpha=0.8, linestyle=''),
@@ -132,7 +118,6 @@ for subtree in subtrees:
 
     ax_right.legend(handles=custom_handles, labels=["Real-world", "Hypothetical"])
 
-    #outfile = f"{outdir}/feature_cost_only/{features}_{subtree}.png"
     outfile = None
     if IS_FEATURE_COMPLEXITY and IS_FEATURE_COST:
         if IS_UNI_FEAT_WEIGHTS:
