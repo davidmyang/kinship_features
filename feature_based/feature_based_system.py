@@ -1,6 +1,7 @@
 from consts import SUBTREE_INDICES, IS_FEATURE_COMPLEXITY, IS_FEATURE_COST, OUTPUT_COMPLEXITY_SUBFOLDER, OUTPUT_COST_SUBFOLDER, OUTPUT_SYSTEM_SUBFOLDER, IS_UNI_FEAT_WEIGHTS
 from feature_complexity_opt import calculate_complexity, KintypeFeatures
-from feature_based_cost_subtree import calculate_cost, get_need_probabilities, calculate_feature_cost
+from feature_based_cost_subtree import calculate_cost, get_need_probabilities
+from utils import get_filepath
 import pandas as pd
 from pathlib import Path
 import json
@@ -206,25 +207,11 @@ if __name__ == "__main__":
         if IS_FEATURE_COST:
             rw_scores_df['feature_cost'] = rw_feature_costs
 
-        rw_output_file = None
+        rw_output_file = get_filepath("rw", tree_index, "csv")
 
-        if IS_FEATURE_COMPLEXITY and IS_FEATURE_COST:
-            if IS_UNI_FEAT_WEIGHTS:
-                rw_output_file = OUTPUT_SYSTEM_SUBFOLDER / f"rw_combined_uni_weights_{tree_index}.csv"
-            else:
-                rw_output_file = OUTPUT_SYSTEM_SUBFOLDER / f"rw_combined_feat_weights_{tree_index}.csv"
-            with open(Path("feature_based") / "output" / "feature_representations" / f"rw_feature_reprs_{tree_index}.json", 'w') as json_file:
-                json.dump(rw_feature_representations, json_file, indent=4)        
-        elif IS_FEATURE_COMPLEXITY:
-            rw_output_file = OUTPUT_COMPLEXITY_SUBFOLDER / f"rw_complex_{tree_index}.csv"
+        if IS_FEATURE_COMPLEXITY: 
             with open(Path("feature_based") / "output" / "feature_representations" / f"rw_feature_reprs_{tree_index}.json", 'w') as json_file:
                 json.dump(rw_feature_representations, json_file, indent=4)
-        elif IS_FEATURE_COST:
-            if IS_UNI_FEAT_WEIGHTS:
-                rw_output_file = OUTPUT_COST_SUBFOLDER / f"rw_cost_uni_weights_{tree_index}.csv"
-            else:
-                rw_output_file = OUTPUT_COST_SUBFOLDER / f"rw_cost_feat_weights_{tree_index}.csv"
-
 
         rw_scores_df.to_csv(rw_output_file, index=False)
         print(f"Processed real-world tree index {tree_index}")
@@ -248,20 +235,6 @@ if __name__ == "__main__":
         if IS_FEATURE_COST:
             hyp_scores_df['feature_cost'] = hyp_feature_costs
 
-
-        hyp_output_file = None
-        if IS_FEATURE_COMPLEXITY and IS_FEATURE_COST:
-            if IS_UNI_FEAT_WEIGHTS:
-                hyp_output_file = OUTPUT_SYSTEM_SUBFOLDER / f"hyp_combined_uni_weights_{tree_index}.csv"
-            else:
-                hyp_output_file = OUTPUT_SYSTEM_SUBFOLDER / f"hyp_combined_feat_weights_{tree_index}.csv"
-        elif IS_FEATURE_COMPLEXITY:
-            hyp_output_file = OUTPUT_COMPLEXITY_SUBFOLDER / f"hyp_complex_{tree_index}.csv"
-        elif IS_FEATURE_COST:
-            if IS_UNI_FEAT_WEIGHTS:
-                hyp_output_file = OUTPUT_COST_SUBFOLDER / f"hyp_cost_uni_weights_{tree_index}.csv"
-            else:
-                hyp_output_file = OUTPUT_COST_SUBFOLDER / f"hyp_cost_feat_weights_{tree_index}.csv"
-
+        hyp_output_file = get_filepath("hyp", tree_index, "csv")
         hyp_scores_df.to_csv(hyp_output_file, index=False)        
         print(f"Processed hypothetical tree index {tree_index}")

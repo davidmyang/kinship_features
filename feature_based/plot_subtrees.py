@@ -7,11 +7,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
-from consts import IS_REDUCTION, IS_UNI_FEAT_WEIGHTS, IS_FEATURE_COMPLEXITY, IS_FEATURE_COST, OUTPUT_SYSTEM_SUBFOLDER, OUTPUT_COMPLEXITY_SUBFOLDER, OUTPUT_COST_SUBFOLDER, FIGS_COMPLEXITY_SUBFOLDER, FIGS_COST_SUBFOLDER, FIGS_SYSTEM_SUBFOLDER
+from consts import SUBTREE_INDICES, IS_UNI_FEAT_WEIGHTS, IS_FEATURE_COMPLEXITY, IS_FEATURE_COST, OUTPUT_SYSTEM_SUBFOLDER, OUTPUT_COMPLEXITY_SUBFOLDER, OUTPUT_COST_SUBFOLDER, FIGS_COMPLEXITY_SUBFOLDER, FIGS_COST_SUBFOLDER, FIGS_SYSTEM_SUBFOLDER
+from utils import get_filepath
 
 outdir = "feature_based/figs"
 
-subtrees = [14]#[12, 14, 15, 16, 17, 18, 19]
 subtree_names = {
     12: "Full Tree",
     14: "Niblings",
@@ -21,41 +21,12 @@ subtree_names = {
     18: "Siblings",
     19: "Uncles"
 }
-
-def get_filepath(index, is_rw=True):
-    if is_rw:
-        if IS_FEATURE_COST and IS_FEATURE_COMPLEXITY:
-            if IS_UNI_FEAT_WEIGHTS:
-                return OUTPUT_SYSTEM_SUBFOLDER / f"rw_combined_uni_weights_{index}.csv"
-            else:
-                return OUTPUT_SYSTEM_SUBFOLDER / f"rw_combined_feat_weights_{index}.csv"
-        elif IS_FEATURE_COMPLEXITY:
-            return OUTPUT_COMPLEXITY_SUBFOLDER / f"rw_complex_{index}.csv"
-        elif IS_FEATURE_COST:
-            if IS_UNI_FEAT_WEIGHTS:
-                return OUTPUT_COST_SUBFOLDER / f"rw_cost_uni_weights_{index}.csv"
-            else:
-                return OUTPUT_COST_SUBFOLDER / f"rw_cost_feat_weights_{index}.csv"
-    else:
-        if IS_FEATURE_COST and IS_FEATURE_COMPLEXITY:
-            if IS_UNI_FEAT_WEIGHTS:
-                return OUTPUT_SYSTEM_SUBFOLDER / f"hyp_combined_uni_weights_{index}.csv"
-            else:
-                return OUTPUT_SYSTEM_SUBFOLDER / f"hyp_combined_feat_weights_{index}.csv"
-        elif IS_FEATURE_COMPLEXITY:
-            return OUTPUT_COMPLEXITY_SUBFOLDER / f"hyp_complex_{index}.csv"
-        elif IS_FEATURE_COST:
-            if IS_UNI_FEAT_WEIGHTS:
-                return OUTPUT_COST_SUBFOLDER / f"hyp_cost_uni_weights_{index}.csv"
-            else:
-                return OUTPUT_COST_SUBFOLDER / f"hyp_cost_feat_weights_{index}.csv"
         
-for subtree in subtrees:
-
+for subtree in SUBTREE_INDICES:
     #rw_df = pd.read_csv(rw_pattern.format(features, subtree))
-    rw_df = pd.read_csv(get_filepath(subtree, is_rw=True))
+    rw_df = pd.read_csv(get_filepath("rw", subtree, "csv"))
     #hyp_df = pd.read_csv(hyp_pattern.format(features, subtree))
-    hyp_df = pd.read_csv(get_filepath(subtree, is_rw=False))
+    hyp_df = pd.read_csv(get_filepath("hyp", subtree, "csv"))
 
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
     ax_left, ax_right = axes
@@ -118,19 +89,7 @@ for subtree in subtrees:
 
     ax_right.legend(handles=custom_handles, labels=["Real-world", "Hypothetical"])
 
-    outfile = None
-    if IS_FEATURE_COMPLEXITY and IS_FEATURE_COST:
-        if IS_UNI_FEAT_WEIGHTS:
-            outfile = FIGS_SYSTEM_SUBFOLDER / f"subtree_combined_uni_weight_{subtree}.png"
-        else:
-            outfile = FIGS_SYSTEM_SUBFOLDER / f"subtree_combined_feat_weight_{subtree}.png"
-    elif IS_FEATURE_COMPLEXITY:
-        outfile = FIGS_COMPLEXITY_SUBFOLDER / f"subtree_complex_{subtree}.png"
-    elif IS_FEATURE_COST:
-        if IS_UNI_FEAT_WEIGHTS:
-            outfile = FIGS_COST_SUBFOLDER / f"subtree_cost_uni_weight_{subtree}.png"
-        else:
-            outfile = FIGS_COST_SUBFOLDER / f"subtree_cost_feat_weight_{subtree}.png"
+    outfile = get_filepath("subtree", subtree, "png")
 
     plt.tight_layout()
     #plt.show()
